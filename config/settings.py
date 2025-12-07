@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "cities_light",
     "users",
+    "habits"
 ]
 
 MIDDLEWARE = [
