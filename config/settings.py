@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "phonenumber_field",
     "cities_light",
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -122,7 +123,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 # Users settings
 
-# AUTH_USER_MODEL = "users.CustomUser"
+AUTH_USER_MODEL = "users.CustomUser"
 
 # Настройки срока действия токенов
 
