@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from habits.models import Habit
 from habits.paginators import HabitsPaginator
+from habits.serializers import HabitsSerializer
 from users.permissions import IsOwner
 
 
@@ -26,7 +27,7 @@ class HabitsViewSet(viewsets.ModelViewSet):
 
         if self.request.user.is_superuser:
             return Habit.objects.all()
-        return Habit.objects.filter(owner=self.request.user)
+        return Habit.objects.filter(user=self.request.user)
 
 
     @action(detail=False, methods=["get"], url_path="public", permission_classes=[IsAuthenticated])
@@ -46,7 +47,7 @@ class HabitsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """При создании привычки устанавливает пользователя как владельца"""
 
-        serializer.save(owner=self.request.user)
+        serializer.save(user=self.request.user)
 
 
     def get_permissions(self):

@@ -1,6 +1,9 @@
 from rest_framework import serializers
+from django.contrib.auth.tokens import default_token_generator
+from django.urls import reverse
 
 from users.models import CustomUser
+from users.tasks import send_activation_email
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -15,12 +18,17 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Создает объект пользователя"""
 
-        return CustomUser.objects.create_user(
+        user = CustomUser.objects.create_user(
             username=validated_data["username"],
             email=validated_data.get("email"),
             password=validated_data["password"],
-            is_active=True,
+            is_active=False,
         )
+        token = default_token_generator.make_token(user)
+        activation_link = reverse("users:activate", args=[user.pk, token])
+        send_activation_email.delay(user.email, activation_link)
+
+        return user
 
 
 class PublicUserSerializer(serializers.ModelSerializer):

@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from users.apps import UsersConfig
 from users.views import (
     CustomUserViewSet,
-    RegisterAPIView,
+    RegisterAPIView, ActivationView,
 )
 
 app_name = UsersConfig.name
@@ -17,6 +17,7 @@ router.register(r"users", CustomUserViewSet, basename="users")
 
 urlpatterns = [
     path("register/", RegisterAPIView.as_view(), name="user_register"),
+    path("activate/<int:user_id>/<str:token>/", ActivationView.as_view(), name="activate"),
     path(
         "token/",
         TokenObtainPairView.as_view(permission_classes=[AllowAny]),

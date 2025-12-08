@@ -23,6 +23,7 @@ django-cities-light = "^3.10.2"
 celery = "^5.6.0"
 eventlet = "^0.40.4"
 django-celery-beat = "^2.8.1"
+celery-types = "^0.23.0"
 
 
 [tool.poetry.group.dev.dependencies]
