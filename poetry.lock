@@ -147,6 +147,20 @@ zookeeper = ["kazoo (>=1.3.1)"]
 zstd = ["zstandard (==0.23.0)"]
 
 [[package]]
+name = "celery-types"
+version = "0.23.0"
+description = "Type stubs for Celery and its related packages"
+optional = false
+python-versions = "<4.0,>=3.9"
+files = [
+    {file = "celery_types-0.23.0-py3-none-any.whl", hash = "sha256:0cc495b8d7729891b7e070d0ec8d4906d2373209656a6e8b8276fe1ed306af9a"},
+    {file = "celery_types-0.23.0.tar.gz", hash = "sha256:402ed0555aea3cd5e1e6248f4632e4f18eec8edb2435173f9e6dc08449fa101e"},
+]
+
+[package.dependencies]
+typing-extensions = ">=4.9.0,<5.0.0"
+
+[[package]]
 name = "click"
 version = "8.3.1"
 description = "Composable command line interface toolkit"
@@ -1387,4 +1401,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "bd0e35399c14d9d3d57c43ee57653f2e973a535f3dbdf99e06d7cf60be93cdaa"
+content-hash = "411f42e63a70a84a5e61dd68eac40c49eccb5a5f416f3c917a7ee61c14b5954c"

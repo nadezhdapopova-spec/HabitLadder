@@ -1,7 +1,11 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
 from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from users.models import CustomUser
 from users.permissions import IsProfileOwner
@@ -10,6 +14,8 @@ from users.serializers import (
     PublicUserSerializer,
     RegisterSerializer,
 )
+
+User = get_user_model()
 
 
 class RegisterAPIView(CreateAPIView):
@@ -21,6 +27,25 @@ class RegisterAPIView(CreateAPIView):
         AllowAny,
     ]
     authentication_classes = []
+
+
+class ActivationView(APIView):
+    """Подтверждение email, активация аккаунта пользователя после регистрации"""
+
+    permission_classes = [AllowAny]
+
+    def get(self, request, user_id, token):
+        """Активирует аккаунт пользователя по email после регистрации"""
+        user = User.objects.filter(pk=user_id).first()
+        if not user:
+            return Response({"detail": "Пользователь не найден"}, status=404)
+
+        if default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return Response({"detail": "Аккаунт активирован"}, status=200)
+
+        return Response({"detail": "Неверный токен"}, status=400)
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
@@ -59,6 +84,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         Определяет права владельца профиля на изменение и удаление своего профиля, если владелец авторизован.
         Остальные действия доступны для всех авторизованных пользователей
         """
+
         if self.action in ["update", "partial_update", "destroy"]:
             return [IsAuthenticated(), IsProfileOwner()]
         return [IsAuthenticated()]

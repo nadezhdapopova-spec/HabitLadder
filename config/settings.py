@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "cities_light",
     "users",
+    "habits"
 ]
 
 MIDDLEWARE = [
@@ -158,7 +159,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,
+    "PAGE_SIZE": 5,
 }
 
 # CORS
@@ -198,3 +199,7 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# FRONTEND_URL
+
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8000")
