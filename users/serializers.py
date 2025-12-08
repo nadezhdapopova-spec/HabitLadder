@@ -13,7 +13,17 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ("id", "username", "email", "password", "phone_number", "city", "avatar")
+        fields = ("id", "username", "email", "password", "phone_number", "tg_chat_id", "city", "avatar")
+
+    @staticmethod
+    def validate_tg_chat_id(value):
+        if value is None:
+            return value
+        if not isinstance(value, int):
+            raise serializers.ValidationError("tg_chat_id должен быть числом")
+        if value <= 0:
+            raise serializers.ValidationError("tg_chat_id должен быть положительным")
+        return value
 
     def create(self, validated_data):
         """Создает объект пользователя"""
@@ -74,4 +84,4 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ("id", "username", "email", "city", "phone_number", "avatar", "pleasant_habits", "useful_habits")
+        fields = ("id", "username", "email", "tg_chat_id", "city", "phone_number", "avatar", "pleasant_habits", "useful_habits")

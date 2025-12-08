@@ -30,6 +30,12 @@ class CustomUser(AbstractUser):
         help_text="Необязательное поле",
     )
     city = models.ForeignKey(to=City, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Город")
+    tg_chat_id = models.BigIntegerField(
+        blank=True,
+        null=True,
+        verbose_name="Telegram chat-id",
+        help_text="Укажите свой телеграм chat-id"
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
