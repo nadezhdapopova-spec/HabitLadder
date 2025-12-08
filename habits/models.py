@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework.exceptions import ValidationError
 
 
 class Habit(models.Model):
@@ -61,6 +62,27 @@ class Habit(models.Model):
     def __str__(self):
         """Строковое отображение урока"""
         return f"Я буду {self.action} в {self.habit_time} в {self.place}"
+
+    def clean(self):
+        if self.reward and self.related_habit:
+            raise ValidationError("Нельзя указывать и вознаграждение, и связанную привычку одновременно")
+
+        if self.related_habit and not self.related_habit.is_pleasant:
+            raise ValidationError("Связанная привычка должна быть приятной")
+
+        if self.is_pleasant:
+            if self.related_habit or self.reward:
+                raise ValidationError("Приятная привычка не может иметь вознаграждение или связанную привычку")
+
+        if self.duration > 120:
+            raise ValidationError("Время выполнения должно быть не больше 120 секунд")
+
+        if not (1 <= self.periodicity <= 7):
+            raise ValidationError("Периодичность должна быть от 1 до 7 дней")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     class Meta:
         unique_together = ("user", "action", "place")
