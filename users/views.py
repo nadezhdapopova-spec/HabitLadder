@@ -59,6 +59,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         Определяет права владельца профиля на изменение и удаление своего профиля, если владелец авторизован.
         Остальные действия доступны для всех авторизованных пользователей
         """
+
         if self.action in ["update", "partial_update", "destroy"]:
             return [IsAuthenticated(), IsProfileOwner()]
         return [IsAuthenticated()]

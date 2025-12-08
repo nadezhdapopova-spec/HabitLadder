@@ -26,18 +26,44 @@ class RegisterSerializer(serializers.ModelSerializer):
 class PublicUserSerializer(serializers.ModelSerializer):
     """Сериализатор для публичного профиля пользователя"""
 
-    # public_habits = HabitSerializer(many=True, read_only=True)
+    pleasant_public_habits = serializers.SerializerMethodField()
+    useful_public_habits = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_pleasant_public_habits(user):
+        """Возвращает список публичных приятных привычек для публичного профиля пользователя"""
+        habits = user.habits.filter(is_pleasant=True, is_public=True)
+        return [str(h) for h in habits]
+
+    @staticmethod
+    def get_useful_public_habits(user):
+        """Возвращает список публичных полезных привычек для публичного профиля пользователя"""
+        habits = user.habits.filter(is_pleasant=False, is_public=True)
+        return [str(h) for h in habits]
 
     class Meta:
         model = CustomUser
-        fields = ("id", "username", "city", "avatar")
+        fields = ("id", "username", "city", "avatar", "pleasant_public_habits", "useful_public_habits")
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """Сериализатор для полного профиля пользователя"""
 
-    # habits = HabitSerializer(many=True, read_only=True)
+    pleasant_habits = serializers.SerializerMethodField()
+    useful_habits = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_pleasant_public_habits(user):
+        """Возвращает список приятных привычек для профиля пользователя"""
+        habits = user.habits.filter(is_pleasant=True)
+        return [str(h) for h in habits]
+
+    @staticmethod
+    def get_useful_public_habits(user):
+        """Возвращает список полезных привычек для профиля пользователя"""
+        habits = user.habits.filter(is_pleasant=False)
+        return [str(h) for h in habits]
 
     class Meta:
         model = CustomUser
-        fields = ("id", "username", "email", "city", "phone_number", "avatar")
+        fields = ("id", "username", "email", "city", "phone_number", "avatar", "pleasant_habits", "useful_habits")
