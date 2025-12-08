@@ -7,7 +7,7 @@ from habits.services import send_telegram_message
 
 @shared_task
 def send_habit_reminder():
-    """Отправляет пользователю напоминание о ближайшей привычке через телеграм-бота"""
+    """Отправляет пользователю напоминание о привычке в телеграм"""
 
     now = timezone.localtime()
     now_time = now.time().replace(second=0, microsecond=0)
