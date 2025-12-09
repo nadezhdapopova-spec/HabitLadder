@@ -10,9 +10,9 @@ class CustomUserAdmin(UserAdmin):
     """Класс для настройки панели админа (суперпользователя)"""
 
     model = CustomUser
-    list_display = ("email", "username", "city", "avatar_preview", "is_active", "is_staff", "is_superuser")
+    list_display = ("email", "username", "tg_chat_id", "city", "timezone", "avatar_preview", "is_active", "is_staff", "is_superuser")
     fieldsets = UserAdmin.fieldsets + (
-        ("Дополнительная информация", {"fields": ("phone_number", "city", "avatar", "avatar_tag")}),
+        ("Дополнительная информация", {"fields": ("phone_number", "tg_chat_id", "city", "timezone", "avatar", "avatar_tag")}),
     )
     add_fieldsets = (
         (
@@ -25,7 +25,9 @@ class CustomUserAdmin(UserAdmin):
                     "password1",
                     "password2",
                     "phone_number",
+                    "tg_chat_id",
                     "city",
+                    "timezone",
                     "avatar",
                 ),
             },

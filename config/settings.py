@@ -2,6 +2,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -176,16 +177,18 @@ CSRF_TRUSTED_ORIGINS = [
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
-CELERY_TIMEZONE = TIME_ZONE
+CELERY_TIMEZONE = "Europe/Moscow"
+CELERY_ENABLE_UTC = False
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-# CELERY_BEAT_SCHEDULE = {
-#     "block_nonactive_user": {
-#         "task": "lms.tasks.block_nonactive_user",
-#         "schedule": timedelta(hours=24),
-#     },
-# }
+CELERY_BEAT_SCHEDULE = {
+    "send_habit_reminder": {
+        "task": "habits.tasks.send_habit_reminder",
+        "schedule": timedelta(minutes=1),
+    },
+}
+
 
 # EMAIL BACKEND SETTINGS
 
@@ -203,3 +206,8 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # FRONTEND_URL
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8000")
+
+# TELEGRAM INTEGRATION
+
+TELEGRAM_URL = "https://api.telegram.org/bot"
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")

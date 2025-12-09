@@ -6,7 +6,7 @@ from config import settings
 
 @shared_task
 def send_activation_email(email, activation_link):
-    """Асинхронная отправка письма активации"""
+    """Асинхронная отправка письма активации профиля при регистрации пользователя"""
 
     full_link = f"{settings.FRONTEND_URL}{activation_link}"
 
