@@ -1,4 +1,5 @@
-from datetime import date
+from zoneinfo import ZoneInfo
+
 from celery import shared_task
 from django.utils import timezone
 from habits.models import Habit
@@ -21,15 +22,9 @@ def send_telegram_message(chat_id, message):
 
 @shared_task
 def send_habit_reminder():
-    """Формирует напоминание о привычке пользователю и отправляет в Телеграм"""
-    now = timezone.now()
-    now_hour_minute = now.replace(second=0, microsecond=0).time()
-
-    habits = Habit.objects.filter(
-        habit_time__hour=now_hour_minute.hour,
-        habit_time__minute=now_hour_minute.minute,
-        user__tg_chat_id__isnull=False,
-    ).select_related("user")
+    """Отправляет пользователю напоминание о привычке с учетом его часового пояса"""
+    now_utc = timezone.now()
+    habits = Habit.objects.filter(user__tg_chat_id__isnull=False).select_related("user")
 
     # print("NOW:", timezone.localtime())
     # print("NOW TIME:", now_hour_minute)
@@ -38,7 +33,17 @@ def send_habit_reminder():
     #
     # print(habits)
     for habit in habits:
-        date_passed = (date.today() - habit.created_at.date()).days
-        if habit.created_at.date() == date.today() or date_passed % habit.periodicity == 0:
+        user_tz = ZoneInfo(habit.user.timezone)
+        user_now = now_utc.astimezone(user_tz)
+        if (user_now.hour, user_now.minute) != (habit.habit_time.hour, habit.habit_time.minute):
+            continue
+
+        created_local = habit.created_at.astimezone(user_tz).date()
+        days_passed = (user_now.date() - created_local).days
+        if habit.created_at.date() == user_now.date() or days_passed % habit.periodicity == 0:
             message = f"Время выполнить привычку: {habit.action}. Это займет всего 2 минуты — ты справишься!"
+            if habit.reward:
+                message += f" После выполнения ты получишь награду: {habit.reward}."
+            if habit.related_habit:
+                message += f" А ещё тебя ждёт приятная привычка: {habit.related_habit.action}"
             send_telegram_message.delay(habit.user.tg_chat_id, message)

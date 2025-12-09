@@ -13,7 +13,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ("id", "username", "email", "password", "phone_number", "tg_chat_id", "city", "avatar")
+        fields = ("id", "username", "email", "password", "phone_number", "tg_chat_id", "city", "timezone", "avatar")
 
     @staticmethod
     def validate_tg_chat_id(value):
@@ -61,7 +61,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ("id", "username", "city", "avatar", "pleasant_public_habits", "useful_public_habits")
+        fields = ("id", "username", "city", "timezone", "avatar", "pleasant_public_habits", "useful_public_habits")
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -84,4 +84,4 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ("id", "username", "email", "tg_chat_id", "city", "phone_number", "avatar", "pleasant_habits", "useful_habits")
+        fields = ("id", "username", "email", "tg_chat_id", "city", "timezone", "phone_number", "avatar", "pleasant_habits", "useful_habits")
