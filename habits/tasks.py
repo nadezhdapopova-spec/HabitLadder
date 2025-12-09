@@ -43,7 +43,7 @@ def send_habit_reminder():
         if habit.created_at.date() == user_now.date() or days_passed % habit.periodicity == 0:
             message = f"Время выполнить привычку: {habit.action}. Это займет всего 2 минуты — ты справишься!"
             if habit.reward:
-                message += f" После выполнения ты получишь награду: {habit.reward}."
+                message += f" После выполнения ты получишь награду: {habit.reward}"
             if habit.related_habit:
                 message += f" А ещё тебя ждёт приятная привычка: {habit.related_habit.action}"
             send_telegram_message.delay(habit.user.tg_chat_id, message)
