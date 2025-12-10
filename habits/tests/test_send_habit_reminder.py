@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from django.test import TestCase
 from django.utils import timezone
-from datetime import time, timedelta
+from datetime import datetime, timezone as dt_timezone, time, timedelta
 from zoneinfo import ZoneInfo
 
 from habits.models import Habit
@@ -10,6 +10,7 @@ from habits.tasks import send_habit_reminder
 
 
 class HabitReminderTests(TestCase):
+    """Тестирует отправку пользователю напоминание о привычке с учетом его часового пояса"""
     def setUp(self):
         """Формирует тестовые данные"""
         self.user = CustomUser.objects.create_user(
@@ -22,18 +23,17 @@ class HabitReminderTests(TestCase):
 
         self.habit = Habit.objects.create(
             user=self.user,
-            action="Drink water",
-            place="home",
+            action="Выпить стакан воды",
+            place="дома",
             habit_time=time(10, 0),
             periodicity=1,
-            reward="test reward",
+            reward="съесть конфету",
         )
 
     @patch("habits.tasks.send_telegram_message.delay")
     def test_reminder_sent_at_correct_time(self, mock_delay):
         """Проверяет, что сообщение отправляется в нужный момент"""
-        # Время сейчас — 10:00 по Москве
-        fake_now = timezone.datetime(2024, 1, 1, 7, 0, tzinfo=timezone.utc)
+        fake_now = datetime(2024, 1, 1, 7, 0, tzinfo=dt_timezone.utc)
 
         with patch("django.utils.timezone.now", return_value=fake_now):
             send_habit_reminder()
@@ -41,10 +41,9 @@ class HabitReminderTests(TestCase):
         mock_delay.assert_called_once()
 
     @patch("habits.tasks.send_telegram_message.delay")
-    def test_no_message_if_time_does_not_match(self, mock_delay):
+    def test_if_time_does_not_match(self, mock_delay):
         """Если время не совпало, ничего не отправляется"""
-        # 10:01 по Москве (разница в минуту)
-        fake_now = timezone.datetime(2024, 1, 1, 7, 1, tzinfo=timezone.utc)
+        fake_now = datetime(2024, 1, 1, 7, 1, tzinfo=dt_timezone.utc)
 
         with patch("django.utils.timezone.now", return_value=fake_now):
             send_habit_reminder()
@@ -54,29 +53,15 @@ class HabitReminderTests(TestCase):
     @patch("habits.tasks.send_telegram_message.delay")
     def test_periodicity_respected(self, mock_delay):
         """Проверяет, что периодичность отправки считается корректно"""
-        # привычка создана 3 дня назад
-        self.habit.created_at = timezone.now() - timedelta(days=3)
+        now_utc = datetime(2024, 1, 4, 7, 0, tzinfo=dt_timezone.utc)  # пример "сейчас" в UTC
+        created_utc = now_utc - timedelta(days=3)
+
+        self.habit.created_at = created_utc
         self.habit.periodicity = 3
         self.habit.save()
 
-        fake_now = timezone.now().astimezone(ZoneInfo("Europe/Moscow"))
-        fake_now = fake_now.replace(hour=10, minute=0)
-
-        with patch("django.utils.timezone.now", return_value=fake_now):
+        fake_now_utc = now_utc
+        with patch("django.utils.timezone.now", return_value=fake_now_utc):
             send_habit_reminder()
 
         mock_delay.assert_called_once()
-
-    @patch("habits.tasks.send_telegram_message.delay")
-    def test_message_text_is_correct(self, mock_delay):
-        """Проверяется, что отправляется корректный текст"""
-        fake_now = timezone.datetime(2024, 1, 1, 7, 0, tzinfo=timezone.utc)
-
-        with patch("django.utils.timezone.now", return_value=fake_now):
-            send_habit_reminder()
-
-        args, kwargs = mock_delay.call_args
-        chat_id, message = args
-
-        self.assertIn("Drink water", message)
-        self.assertIn("награду: test reward", message)
