@@ -71,13 +71,13 @@ class CustomUserSerializer(serializers.ModelSerializer):
     useful_habits = serializers.SerializerMethodField()
 
     @staticmethod
-    def get_pleasant_public_habits(user):
+    def get_pleasant_habits(user):
         """Возвращает список приятных привычек для профиля пользователя"""
         habits = user.habits.filter(is_pleasant=True)
         return [str(h) for h in habits]
 
     @staticmethod
-    def get_useful_public_habits(user):
+    def get_useful_habits(user):
         """Возвращает список полезных привычек для профиля пользователя"""
         habits = user.habits.filter(is_pleasant=False)
         return [str(h) for h in habits]

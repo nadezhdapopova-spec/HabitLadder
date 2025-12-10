@@ -67,14 +67,16 @@ class CustomUserViewSet(viewsets.ModelViewSet):
 
         if self.action == "retrieve":
             user = self.get_object()
-            if user.id != self.request.user.id:
-                return PublicUserSerializer
-            return CustomUserSerializer
+            if self.request.user.is_superuser or user.id == self.request.user.id:
+                return CustomUserSerializer
+            return PublicUserSerializer
 
         if self.action in ["update", "partial_update"]:
             return CustomUserSerializer
 
         if self.action == "list":
+            if self.request.user.is_superuser:
+                return CustomUserSerializer
             return PublicUserSerializer
 
         return CustomUserSerializer
@@ -84,7 +86,8 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         Определяет права владельца профиля на изменение и удаление своего профиля, если владелец авторизован.
         Остальные действия доступны для всех авторизованных пользователей
         """
-
+        if self.request.user.is_superuser:
+            return [IsAuthenticated()]
         if self.action in ["update", "partial_update", "destroy"]:
             return [IsAuthenticated(), IsProfileOwner()]
         return [IsAuthenticated()]
