@@ -6,8 +6,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from users.apps import UsersConfig
 from users.views import (
+    ActivationView,
     CustomUserViewSet,
-    RegisterAPIView, ActivationView,
+    RegisterAPIView,
 )
 
 app_name = UsersConfig.name

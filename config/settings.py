@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "cities_light",
     "users",
-    "habits"
+    "habits",
 ]
 
 MIDDLEWARE = [
@@ -188,7 +188,6 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": timedelta(minutes=1),
     },
 }
-
 
 # EMAIL BACKEND SETTINGS
 

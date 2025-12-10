@@ -1,5 +1,7 @@
+from unittest.mock import MagicMock, patch
+
 from django.test import TestCase
-from unittest.mock import patch, MagicMock
+
 from habits.tasks import send_telegram_message
 
 

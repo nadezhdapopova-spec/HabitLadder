@@ -4,8 +4,9 @@ import django.contrib.auth.models
 import django.contrib.auth.validators
 import django.db.models.deletion
 import django.utils.timezone
-import phonenumber_field.modelfields
 from django.db import migrations, models
+
+import phonenumber_field.modelfields
 
 
 class Migration(migrations.Migration):

@@ -1,14 +1,16 @@
 from zoneinfo import ZoneInfo
 
-from celery import shared_task
 from django.utils import timezone
-from habits.models import Habit
+
 import requests
-from config.settings import TELEGRAM_URL, TELEGRAM_TOKEN
+from celery import shared_task
+
+from config.settings import TELEGRAM_TOKEN, TELEGRAM_URL
+from habits.models import Habit
 
 
 @shared_task
-def send_telegram_message(chat_id, message):
+def send_telegram_message(chat_id: int, message: str):
     """Отправляет сообщение в Телеграм"""
     params = {
         "text": message,

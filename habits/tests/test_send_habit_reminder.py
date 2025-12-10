@@ -1,24 +1,20 @@
+from datetime import datetime, time, timedelta, timezone as dt_timezone
 from unittest.mock import patch
+
 from django.test import TestCase
-from django.utils import timezone
-from datetime import datetime, timezone as dt_timezone, time, timedelta
-from zoneinfo import ZoneInfo
 
 from habits.models import Habit
-from users.models import CustomUser
 from habits.tasks import send_habit_reminder
+from users.models import CustomUser
 
 
 class HabitReminderTests(TestCase):
     """Тестирует отправку пользователю напоминание о привычке с учетом его часового пояса"""
+
     def setUp(self):
         """Формирует тестовые данные"""
         self.user = CustomUser.objects.create_user(
-            email="user@test.com",
-            username="user",
-            password="pass123",
-            tg_chat_id="111",
-            timezone="Europe/Moscow"
+            email="user@test.com", username="user", password="pass123", tg_chat_id="111", timezone="Europe/Moscow"
         )
 
         self.habit = Habit.objects.create(
