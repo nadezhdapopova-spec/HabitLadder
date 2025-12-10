@@ -61,7 +61,7 @@ class Habit(models.Model):
 
     def __str__(self):
         """Строковое отображение урока"""
-        return f"Я буду {self.action} в {self.habit_time} в {self.place}"
+        return f"{self.action} в {self.habit_time} {self.place}"
 
     def clean(self):
         if self.reward and self.related_habit:

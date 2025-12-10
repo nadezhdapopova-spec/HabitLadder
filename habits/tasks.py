@@ -26,12 +26,6 @@ def send_habit_reminder():
     now_utc = timezone.now()
     habits = Habit.objects.filter(user__tg_chat_id__isnull=False).select_related("user")
 
-    # print("NOW:", timezone.localtime())
-    # print("NOW TIME:", now_hour_minute)
-    # print("ALL HABITS:", Habit.objects.all().values("id", "habit_time"))
-    # print("HABITS TO SEND:", list(habits.values("id", "habit_time", "user__tg_chat_id")))
-    #
-    # print(habits)
     for habit in habits:
         user_tz = ZoneInfo(habit.user.timezone)
         user_now = now_utc.astimezone(user_tz)
