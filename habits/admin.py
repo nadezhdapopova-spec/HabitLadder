@@ -7,6 +7,18 @@ from habits.models import Habit
 class CoursesAdmin(admin.ModelAdmin):
     """Добавляет привычки в админ-панель"""
 
-    list_display = ("id", "user", "action", "place", "habit_time", "periodicity", "duration",
-                    "is_pleasant", "related_habit", "is_public", "created_at", "updated_at")
+    list_display = (
+        "id",
+        "user",
+        "action",
+        "place",
+        "habit_time",
+        "periodicity",
+        "duration",
+        "is_pleasant",
+        "related_habit",
+        "is_public",
+        "created_at",
+        "updated_at",
+    )
     search_fields = ("id", "action")

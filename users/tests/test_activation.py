@@ -1,7 +1,9 @@
+from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse
+
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.contrib.auth.tokens import default_token_generator
+
 from users.models import CustomUser
 
 
@@ -9,10 +11,7 @@ class ActivationViewTests(APITestCase):
 
     def setUp(self):
         """Формирует тестовые данные для авторизации пользователя"""
-        self.user = CustomUser.objects.create(
-            email="test@example.com",
-            is_active=False
-        )
+        self.user = CustomUser.objects.create(email="test@example.com", is_active=False)
 
     def test_activation_success(self):
         """Проверяет, что пользователь активен после подтверждения регистрации"""

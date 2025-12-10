@@ -1,6 +1,7 @@
-from rest_framework import serializers
 from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse
+
+from rest_framework import serializers
 
 from users.models import CustomUser
 from users.tasks import send_activation_email
@@ -55,7 +56,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_useful_public_habits(user):
-        """Возвращает список публичных полезных привычек для публичного профиля пользователя"""
+        """Возвращает список публичных привычек для публичного профиля пользователя"""
         habits = user.habits.filter(is_pleasant=False, is_public=True)
         return [str(h) for h in habits]
 
@@ -72,16 +73,27 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_pleasant_habits(user):
-        """Возвращает список приятных привычек для профиля пользователя"""
+        """Возвращает список атомных привычек для профиля пользователя"""
         habits = user.habits.filter(is_pleasant=True)
         return [str(h) for h in habits]
 
     @staticmethod
     def get_useful_habits(user):
-        """Возвращает список полезных привычек для профиля пользователя"""
+        """Возвращает список атомных привычек для профиля пользователя"""
         habits = user.habits.filter(is_pleasant=False)
         return [str(h) for h in habits]
 
     class Meta:
         model = CustomUser
-        fields = ("id", "username", "email", "tg_chat_id", "city", "timezone", "phone_number", "avatar", "pleasant_habits", "useful_habits")
+        fields = (
+            "id",
+            "username",
+            "email",
+            "tg_chat_id",
+            "city",
+            "timezone",
+            "phone_number",
+            "avatar",
+            "pleasant_habits",
+            "useful_habits",
+        )
