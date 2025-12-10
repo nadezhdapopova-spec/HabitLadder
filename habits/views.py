@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
@@ -24,10 +25,12 @@ class HabitsViewSet(viewsets.ModelViewSet):
         Возвращает только привычки текущего пользователя
         Суперпользователь видит все привычки
         """
-
-        if self.request.user.is_superuser:
+        user = self.request.user
+        if user.is_superuser:
             return Habit.objects.all()
-        return Habit.objects.filter(user=self.request.user)
+        if user.is_authenticated:
+            return Habit.objects.filter(Q(user=user) | Q(is_public=True))
+        return Habit.objects.none()
 
 
     @action(detail=False, methods=["get"], url_path="public", permission_classes=[IsAuthenticated])
