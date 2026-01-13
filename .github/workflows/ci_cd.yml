@@ -60,7 +60,7 @@ jobs:
         run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/ready4vpr:${{ github.sha }} .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/habitladder:${{ github.sha }} .
 
       - name: Push Docker image in Docker Hub
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/ready4vpr:${{ github.sha }}
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/habitladder:${{ github.sha }}
