@@ -52,7 +52,7 @@ services:
   redis:
     image: redis:alpine
     volumes:
-      - redis_data:/data
+      - hl_redis_data:/data
   celery:
     image: ${DOCKER_HUB_USERNAME}/habitladder:${DOCKER_HUB_TAG}
     command: celery -A config worker -l INFO -P solo
