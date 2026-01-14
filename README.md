@@ -176,7 +176,144 @@ coverage report
 /redoc/
 ````
 
-### 
+## Запуск проекта на удаленном сервере
+
+Проект развёртывается на удалённом сервере с помощью Docker Compose и GitHub Actions.
+
+**Адрес сервера с развернутым приложением:** 
+
+### Архитектура
+
+Django + DRF
+
+PostgreSQL
+
+Redis
+
+Celery + Celery Beat
+
+Gunicorn
+
+Nginx
+
+Docker / Docker Compose
+
+GitHub Actions (CI/CD)
+
+### Настройка удалённого сервера
+
+**На сервере должны быть установлены:**
+````
+sudo apt update
+sudo apt install -y docker.io docker-compose-plugin nginx
+````
+
+**Дополнительно:**
+
+- пользователь добавлен в группу docker
+
+- вход по SSH-ключу
+
+- открыты порты 80, 443, 22
+
+- проект размещается в директории:
+/home/<user>/habitladder
+
+### Переменные окружения
+
+**Файл .env:**
+
+- не коммитится в репозиторий
+
+- используется на сервере и создаётся автоматически в GitHub Actions
+
+### GitHub Secrets
+
+В репозитории → Settings → Secrets and variables → Actions должны быть добавлены:
+
+| Secret                    | Назначение              |
+| ------------------------- |-------------------------|
+| `DJANGO_SECRET_KEY`       | Django SECRET_KEY       |
+| `DB_PASSWORD`             | Пароль PostgreSQL       |
+| `EMAIL_HOST_USER`         | Почта                   |
+| `EMAIL_HOST_PASSWORD`     | Пароль почты            |
+| `TELEGRAM_TOKEN`          | Telegram token          |
+| `BASE_SERVER_URL`         | Домен или IP сервера    |
+| `DOCKER_HUB_USERNAME`     | Docker Hub username     |
+| `DOCKER_HUB_ACCESS_TOKEN` | Docker Hub access token |
+| `SSH_KEY`                 | Приватный SSH-ключ      |
+| `SSH_USER`                | Пользователь сервера    |
+| `SERVER_IP`               | IP сервера              |
+
+### CI/CD (GitHub Actions)
+
+Workflow расположен в .github/workflows/ci_cd.yaml
+
+**Алгоритм workflow:**
+- Lint
+    - запуск линтеров
+
+````
+lint:
+	isort . --check-only --diff
+	black . --check
+	flake8 .
+
+format:
+	isort .
+	black .
+````
+
+- Tests
+
+    - запуск Django-тестов
+
+    - при ошибках деплой останавливается
+
+
+- Build
+
+    - сборка Docker-образа
+
+    - push в Docker Hub
+
+
+- Deploy
+
+    - генерация .env
+
+    - подмена server_name в nginx.conf
+
+    - деплой на сервер через rsync
+
+    - Cleanup .env из GitHub Actions runner
+
+    - загрузка образов сервисов, указанных в docker-compose.yaml (docker compose pull)
+
+    - запуск в фоновом режиме bd, redis
+
+    - применение миграций
+  
+    - сборка статических файлов в контейнер с приложением
+
+    - запуск сервисов в фоновом режиме
+
+Pre-commit с линтерами запускается при каждом commit.
+Workflow запускается автоматически при каждом push.
+
+### Деплой приложения
+
+Деплой происходит автоматически после успешного прохождения тестов.
+
+Ручной деплой на сервере:
+````
+cd ~/habitladder
+docker compose pull
+docker compose up -d db redis
+docker compose run --rm web python manage.py migrate
+docker compose run --rm web python manage.py collectstatic --noinput
+docker compose up -d
+````
 
 ## Автор
 Надежда Попова
