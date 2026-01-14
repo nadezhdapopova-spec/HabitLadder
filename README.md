@@ -77,7 +77,7 @@ EMAIL_USE_SSL=True
 TELEGRAM_TOKEN=telegtam_token
 
 DOCKER_HUB_USERNAME=your_docker_hub_username_here
-DOCKER_HUB_TAG=docker_hub_ready_four_vpr_image_tag_here
+DOCKER_HUB_TAG=docker_hub_habitladder_image_tag_here
 
 BASE_SERVER_URL=localhost
 ````
@@ -180,7 +180,7 @@ coverage report
 
 Проект развёртывается на удалённом сервере с помощью Docker Compose и GitHub Actions.
 
-**Адрес сервера с развернутым приложением:** 
+**Адрес сервера с развернутым приложением:** http://homeworks.creepysnakes.su/habits/
 
 ### Архитектура
 
@@ -290,15 +290,10 @@ format:
 
     - загрузка образов сервисов, указанных в docker-compose.yaml (docker compose pull)
 
-    - запуск в фоновом режиме bd, redis
-
-    - применение миграций
-  
-    - сборка статических файлов в контейнер с приложением
-
-    - запуск сервисов в фоновом режиме
+    - запуск сервисов в фоновом режиме (docker compose up -d)
 
 Pre-commit с линтерами запускается при каждом commit.
+
 Workflow запускается автоматически при каждом push.
 
 ### Деплой приложения
@@ -309,9 +304,6 @@ Workflow запускается автоматически при каждом p
 ````
 cd ~/habitladder
 docker compose pull
-docker compose up -d db redis
-docker compose run --rm web python manage.py migrate
-docker compose run --rm web python manage.py collectstatic --noinput
 docker compose up -d
 ````
 

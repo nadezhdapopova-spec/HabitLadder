@@ -99,7 +99,7 @@ jobs:
           EMAIL_PORT=465
           EMAIL_USE_TLS=False
           EMAIL_USE_SSL=True
-          STRIPE_API_KEY=${{ secrets.STRIPE_API_KEY }}          
+          TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}       
           BASE_SERVER_URL=${{ secrets.BASE_SERVER_URL }}
           DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_HUB_TAG=${{ github.sha }}
