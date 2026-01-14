@@ -109,6 +109,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           cd /home/${{ secrets.SSH_USER }}/habitladder
           docker compose pull
+          docker compose up -d db redis
+          docker compose run --rm web migrate
           docker compose up -d
-          docker compose exec web python manage.py migrate --noinput
           EOF
