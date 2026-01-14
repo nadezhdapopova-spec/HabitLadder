@@ -54,16 +54,32 @@ poetry install
 ````
 3. Заполните .env
 ````
-SECRET_KEY=...
-DEBUG=True
-ALLOWED_HOSTS=*
-DATABASE_URL=postgres://...
-TELEGRAM_TOKEN=...
-TELEGRAM_URL=https://api.telegram.org/bot
+DJANGO_SECRET_KEY=your_secret_key_here
+DEBUG=False
+
+DB_NAME=your_database_name_here
+DB_USER=your_database_user_here
+DB_HOST=db
+DB_PORT=5432
+DB_PASSWORD=your_database_password_here
+
+REDIS_LOCATION=redis://redis:6379/1
+CELERY_BROKER_URL=redis://redis:6379/2
+CELERY_RESULT_BACKEND=redis://redis:6379/3
+
+EMAIL_HOST_USER=your_email_host_user_here
+EMAIL_HOST_PASSWORD=your_email_host_password_here
 EMAIL_HOST=smtp.yandex.ru
-EMAIL_HOST_USER=...
-EMAIL_HOST_PASSWORD=...
-REDIS_URL=redis://127.0.0.1:6379/1
+EMAIL_PORT=465
+EMAIL_USE_TLS=False
+EMAIL_USE_SSL=True
+
+TELEGRAM_TOKEN=telegtam_token
+
+DOCKER_HUB_USERNAME=your_docker_hub_username_here
+DOCKER_HUB_TAG=docker_hub_ready_four_vpr_image_tag_here
+
+BASE_SERVER_URL=localhost
 ````
 4. Выполните миграции
 ````
@@ -159,6 +175,9 @@ coverage report
 или
 /redoc/
 ````
+
+### 
+
 ## Автор
 Надежда Попова
 
