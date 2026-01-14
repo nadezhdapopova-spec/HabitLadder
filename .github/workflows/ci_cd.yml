@@ -110,6 +110,7 @@ jobs:
           cd /home/${{ secrets.SSH_USER }}/habitladder
           docker compose pull
           docker compose up -d db redis
-          docker compose run --rm web migrate
+          docker compose run --rm web python manage.py migrate
+          docker compose run --rm web python manage.py collectstatic --noinput
           docker compose up -d
           EOF
